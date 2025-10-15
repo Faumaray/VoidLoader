@@ -7,6 +7,8 @@
 plugins {
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
+    `java`
+    `maven-publish`
 }
 
 java {
@@ -14,6 +16,7 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
+group = "org.faumaray"
 version = "1.0.0"
 
 tasks.withType<Jar>().configureEach {
@@ -44,10 +47,23 @@ tasks.withType<Jar>().configureEach {
     }
     manifest {
         attributes(
-            "Main-Class" to "org.faumaray.FabricPPAgent",
-            "Agent-Class" to "org.faumaray.FabricPPAgent",
-            "Premain-Class" to "org.faumaray.FabricPPAgent"
+            "Main-Class" to "org.faumaray.VoidLoaderMain",
+            "Agent-Class" to "org.faumaray.VoidLoaderAgent",
+            "Premain-Class" to "org.faumaray.VoidLoaderAgent"
         )
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "org.faumaray"
+            artifactId = "VoidLoader"
+            version = "1.0.0"
+
+            from(components["java"])
+        }
     }
 }
 

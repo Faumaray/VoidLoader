@@ -48,7 +48,7 @@ void JNICALL ClassTransformer::classFileLoadHook(jvmtiEnv* jvmti, JNIEnv* jni,
     
     // Only transform specific Minecraft classes
     if (TARGET_CLASSES.find(class_name) != TARGET_CLASSES.end()) {
-        std::cout << "[FabricPP] Transforming class: " << class_name << std::endl;
+        std::cout << "[VoidLoader] Transforming class: " << class_name << std::endl;
         transformClass(jvmti, class_data, class_data_len, new_class_data, new_class_data_len);
     }
 }
@@ -75,7 +75,7 @@ bool ClassTransformer::transformClass(jvmtiEnv* jvmti,
         *new_data = copy;
         *new_len = original_len;
         
-        std::cout << "[FabricPP] Successfully copied class (no transformation applied)" << std::endl;
+        std::cout << "[VoidLoader] Successfully copied class (no transformation applied)" << std::endl;
         return true;
     }
     

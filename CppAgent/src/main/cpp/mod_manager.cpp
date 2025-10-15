@@ -4,28 +4,28 @@
 #include <sstream>
 
 ModManager::ModManager() {
-    std::cout << "[FabricPP] ModManager initialized" << std::endl;
+    std::cout << "[VoidLoader] ModManager initialized" << std::endl;
 }
 
 ModManager::~ModManager() {
-    std::cout << "[FabricPP] ModManager destroyed" << std::endl;
+    std::cout << "[VoidLoader] ModManager destroyed" << std::endl;
 }
 
 // Discover mods in the mods directory
 void ModManager::discoverMods(const std::string& mods_dir) {
     namespace fs = std::filesystem;
     
-    std::cout << "[FabricPP] Scanning for mods in: " << mods_dir << std::endl;
+    std::cout << "[VoidLoader] Scanning for mods in: " << mods_dir << std::endl;
     
     try {
         // Create mods directory if it doesn't exist
         if (!fs::exists(mods_dir)) {
             fs::create_directories(mods_dir);
-            std::cout << "[FabricPP] Created mods directory: " << mods_dir << std::endl;
+            std::cout << "[VoidLoader] Created mods directory: " << mods_dir << std::endl;
             
             // Create a README
             std::ofstream readme(mods_dir + "/README.txt");
-            readme << "FabricPP Mods Directory\n";
+            readme << "VoidLoader Mods Directory\n";
             readme << "=======================\n\n";
             readme << "Place your .jar mod files here.\n";
             readme << "The mod loader will automatically detect and load them.\n";
@@ -48,12 +48,12 @@ void ModManager::discoverMods(const std::string& mods_dir) {
             }
         }
         
-        std::cout << "[FabricPP] Discovered " << mod_count << " mod file(s)" << std::endl;
-        std::cout << "[FabricPP] Loaded " << loaded_mods.size() << " mod(s) successfully" << std::endl;
+        std::cout << "[VoidLoader] Discovered " << mod_count << " mod file(s)" << std::endl;
+        std::cout << "[VoidLoader] Loaded " << loaded_mods.size() << " mod(s) successfully" << std::endl;
         
         // Print loaded mods
         if (!loaded_mods.empty()) {
-            std::cout << "\n[FabricPP] Loaded Mods:" << std::endl;
+            std::cout << "\n[VoidLoader] Loaded Mods:" << std::endl;
             for (const auto& mod : loaded_mods) {
                 std::cout << "  - " << mod.name << " v" << mod.version 
                           << " (" << mod.file_path << ")" << std::endl;
@@ -62,14 +62,14 @@ void ModManager::discoverMods(const std::string& mods_dir) {
         }
         
     } catch (const std::exception& e) {
-        std::cerr << "[FabricPP] Error discovering mods: " << e.what() << std::endl;
+        std::cerr << "[VoidLoader] Error discovering mods: " << e.what() << std::endl;
     }
 }
 
 // Load a single mod
 void ModManager::loadMod(const std::filesystem::path& mod_path) {
     std::string filename = mod_path.filename().string();
-    std::cout << "[FabricPP] Loading mod: " << filename << std::endl;
+    std::cout << "[VoidLoader] Loading mod: " << filename << std::endl;
     
     try {
         ModInfo mod;
@@ -87,10 +87,10 @@ void ModManager::loadMod(const std::filesystem::path& mod_path) {
         }
         
         loaded_mods.push_back(mod);
-        std::cout << "[FabricPP] Loaded: " << mod.name << " v" << mod.version << std::endl;
+        std::cout << "[VoidLoader] Loaded: " << mod.name << " v" << mod.version << std::endl;
         
     } catch (const std::exception& e) {
-        std::cerr << "[FabricPP] Failed to load mod " << filename << ": " << e.what() << std::endl;
+        std::cerr << "[VoidLoader] Failed to load mod " << filename << ": " << e.what() << std::endl;
     }
 }
 
@@ -117,7 +117,7 @@ void ModManager::parseJarMod(const std::filesystem::path& jar_path, ModInfo& mod
     
     mod.type = ModType::JAR;
     
-    std::cout << "[FabricPP]   Parsed JAR mod: " << mod.name << " v" << mod.version << std::endl;
+    std::cout << "[VoidLoader]   Parsed JAR mod: " << mod.name << " v" << mod.version << std::endl;
 }
 
 // Parse native mod metadata
@@ -129,7 +129,7 @@ void ModManager::parseNativeMod(const std::filesystem::path& native_path, ModInf
     // This would dlopen/LoadLibrary the .dll/.so and call an exported function
     // like "getModInfo()" to retrieve metadata
     
-    std::cout << "[FabricPP]   Parsed native mod: " << mod.name << std::endl;
+    std::cout << "[VoidLoader]   Parsed native mod: " << mod.name << std::endl;
 }
 
 // Apply transformations from mods to a class
@@ -150,7 +150,7 @@ void ModManager::applyTransformations(
         
         // For now, just log
         if (class_name.find("net/minecraft/client/Minecraft") == 0) {
-            std::cout << "[FabricPP]   Mod '" << mod.name << "' checking transformations for: " 
+            std::cout << "[VoidLoader]   Mod '" << mod.name << "' checking transformations for: " 
                       << class_name << std::endl;
         }
     }
@@ -166,7 +166,7 @@ void ModManager::setModEnabled(const std::string& mod_name, bool enabled) {
     for (auto& mod : loaded_mods) {
         if (mod.name == mod_name) {
             mod.enabled = enabled;
-            std::cout << "[FabricPP] Mod '" << mod_name << "' " 
+            std::cout << "[VoidLoader] Mod '" << mod_name << "' " 
                       << (enabled ? "enabled" : "disabled") << std::endl;
             return;
         }

@@ -42,14 +42,14 @@ void JvmtiHandler::setAgentInitialized(bool initialized) {
 
 // JVMTI Agent Entry Point
 extern "C" JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM* vm, char* options, void* reserved) {
-    std::cout << "[FabricPP] C++ Agent_OnLoad called!" << std::endl;
+    std::cout << "[VoidLoader] C++ Agent_OnLoad called!" << std::endl;
     
     JvmtiHandler::setJavaVM(vm);
     
     // Get JVMTI environment
     jint result = vm->GetEnv(reinterpret_cast<void**>(&g_jvmti), JVMTI_VERSION_1_2);
     if (result != JNI_OK || g_jvmti == nullptr) {
-        std::cerr << "[FabricPP] ERROR: Unable to access JVMTI!" << std::endl;
+        std::cerr << "[VoidLoader] ERROR: Unable to access JVMTI!" << std::endl;
         return JNI_ERR;
     }
     
@@ -64,7 +64,7 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM* vm, char* options, void* 
     
     jvmtiError error = g_jvmti->AddCapabilities(&capabilities);
     if (error != JVMTI_ERROR_NONE) {
-        std::cerr << "[FabricPP] ERROR: Unable to set JVMTI capabilities!" << std::endl;
+        std::cerr << "[VoidLoader] ERROR: Unable to set JVMTI capabilities!" << std::endl;
         return JNI_ERR;
     }
     
@@ -76,7 +76,7 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM* vm, char* options, void* 
     
     error = g_jvmti->SetEventCallbacks(&callbacks, sizeof(callbacks));
     if (error != JVMTI_ERROR_NONE) {
-        std::cerr << "[FabricPP] ERROR: Unable to set JVMTI callbacks!" << std::endl;
+        std::cerr << "[VoidLoader] ERROR: Unable to set JVMTI callbacks!" << std::endl;
         return JNI_ERR;
     }
     
@@ -85,31 +85,31 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM* vm, char* options, void* 
     g_jvmti->SetEventNotificationMode(JVMTI_ENABLE, JVMTI_EVENT_VM_INIT, nullptr);
     g_jvmti->SetEventNotificationMode(JVMTI_ENABLE, JVMTI_EVENT_VM_DEATH, nullptr);
     
-    std::cout << "[FabricPP] C++ Agent loaded successfully!" << std::endl;
+    std::cout << "[VoidLoader] C++ Agent loaded successfully!" << std::endl;
     return JNI_OK;
 }
 
 // Called from Java agent - NON-BLOCKING
-extern "C" JNIEXPORT void JNICALL Java_org_faumaray_FabricPPAgent_nativeAgentStart(JNIEnv* env, jclass clazz) {
-    std::cout << "[FabricPP] Native agent started from Java" << std::endl;
+extern "C" JNIEXPORT void JNICALL Java_org_faumaray_VoidLoaderAgent_nativeAgentStart(JNIEnv* env, jclass clazz) {
+    std::cout << "[VoidLoader] Native agent started from Java" << std::endl;
     // Don't do any heavy work here - just initialization
 }
 
-extern "C" JNIEXPORT void JNICALL Java_org_faumaray_FabricPPAgent_nativeAgentInit(JNIEnv* env, jclass clazz, jstring args, jobject instrumentation) {
-    std::cout << "[FabricPP] Native agent initialized with Instrumentation" << std::endl;
+extern "C" JNIEXPORT void JNICALL Java_org_faumaray_VoidLoaderAgent_nativeAgentInit(JNIEnv* env, jclass clazz, jstring args, jobject instrumentation) {
+    std::cout << "[VoidLoader] Native agent initialized with Instrumentation" << std::endl;
     // Initialize mod manager - but don't block
     g_modManager.discoverMods("./mods");
     JavaVM* vm;
     auto error = env->GetJavaVM(&vm);
     if (error != JNI_OK) {
-        std::cerr << "[FabricPP] FATAL: Unable to get JavaVM from JNIEnv!" << std::endl;
+        std::cerr << "[VoidLoader] FATAL: Unable to get JavaVM from JNIEnv!" << std::endl;
         return;
     }
     Agent_OnLoad(vm, nullptr, nullptr);
 }
 
 // Cleanup native resources
-extern "C" JNIEXPORT void JNICALL Java_org_faumaray_FabricPPAgent_nativeCleanup(JNIEnv* env, jclass clazz) {
-    std::cout << "[FabricPP] Native cleanup called" << std::endl;
+extern "C" JNIEXPORT void JNICALL Java_org_faumaray_VoidLoaderAgent_nativeCleanup(JNIEnv* env, jclass clazz) {
+    std::cout << "[VoidLoader] Native cleanup called" << std::endl;
     // Cleanup any native resources if needed
 }

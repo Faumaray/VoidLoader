@@ -1,26 +1,31 @@
 package org.faumaray;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.instrument.Instrumentation;
-import java.io.*;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Set;
 
 /**
- * FabricPP Java Agent Wrapper
+ * VoidLoader Java Agent Wrapper
  * 
  * This is OPTIONAL - the C++ agent loads via Agent_OnLoad which happens
  * BEFORE any Java code runs. This wrapper is only needed if you want
  * to load the agent as a Java agent instead of a native JVMTI agent.
  * 
- * For native loading (recommended), use: -agentpath:/path/to/libfabricpp_agent.so
- * For Java agent loading, use: -javaagent:fabricpp-agent.jar
+ * For native loading (recommended), use: -agentpath:/path/to/libVoidLoader_agent.so
+ * For Java agent loading, use: -javaagent:VoidLoader-agent.jar
  */
-public class FabricPPAgent {
-    private static final String LIBRARY_NAME_LINUX = "libfabricpp.so";
-    private static final String LIBRARY_NAME_WINDOWS = "libfabricpp.dll";
-    private static final String LIBRARY_NAME_MAC = "libfabricpp.dylib";
-    private static final String TEMP_PREFIX = "fabricpp_";
+public class VoidLoaderAgent {
+    private static final String LIBRARY_NAME_LINUX = "libVoidLoader.so";
+    private static final String LIBRARY_NAME_WINDOWS = "libVoidLoader.dll";
+    private static final String LIBRARY_NAME_MAC = "libVoidLoader.dylib";
+    private static final String TEMP_PREFIX = "VoidLoader_";
     private static File extractedLibrary = null;
     
     // Native method declarations (bridge to C++)
@@ -29,7 +34,7 @@ public class FabricPPAgent {
     private static native void nativeCleanup();
     
     static {
-        System.out.println("[FabricPP/Java] Java agent wrapper initializing...");
+        System.out.println("[VoidLoader/Java] Java agent wrapper initializing...");
         loadNativeLibrary();
     }
     
@@ -48,23 +53,23 @@ public class FabricPPAgent {
         try {
             // Try system path first
             try {
-                System.loadLibrary("fabricpp_agent");
-                System.out.println("[FabricPP/Java] Loaded from system library path");
+                System.loadLibrary("VoidLoader_agent");
+                System.out.println("[VoidLoader/Java] Loaded from system library path");
                 return;
             } catch (UnsatisfiedLinkError e) {
-                System.out.println("[FabricPP/Java] System library not found, extracting from JAR...");
+                System.out.println("[VoidLoader/Java] System library not found, extracting from JAR...");
             }
             
             // Extract from JAR
             extractAndLoadLibrary();
             
         } catch (Exception e) {
-            System.err.println("[FabricPP/Java] CRITICAL: Failed to load native library!");
+            System.err.println("[VoidLoader/Java] CRITICAL: Failed to load native library!");
             e.printStackTrace();
             System.err.println("\n" +
                 "========================================\n" +
                 "RECOMMENDED: Use native agent loading instead!\n" +
-                "Add to JVM args: -agentpath:/path/to/libfabricpp_agent.so\n" +
+                "Add to JVM args: -agentpath:/path/to/libVoidLoader_agent.so\n" +
                 "This loads BEFORE any Java code runs.\n" +
                 "========================================\n");
         }
@@ -74,7 +79,7 @@ public class FabricPPAgent {
         String libraryName = getLibraryName();
         
         // Get library from JAR resources
-        InputStream libStream = FabricPPAgent.class.getResourceAsStream("/" + libraryName);
+        InputStream libStream = VoidLoaderAgent.class.getResourceAsStream("/" + libraryName);
         if (libStream == null) {
             throw new IOException("Native library not found in JAR: " + libraryName);
         }
@@ -109,7 +114,7 @@ public class FabricPPAgent {
         
         // Load the library
         System.load(extractedLibrary.getAbsolutePath());
-        System.out.println("[FabricPP/Java] Loaded from JAR: " + extractedLibrary.getAbsolutePath());
+        System.out.println("[VoidLoader/Java] Loaded from JAR: " + extractedLibrary.getAbsolutePath());
     }
     
     /**
@@ -119,21 +124,21 @@ public class FabricPPAgent {
      */
     public static void premain(String args, Instrumentation inst) {
         System.out.println("\n========================================");
-        System.out.println("[FabricPP/Java] Java agent premain called");
-        System.out.println("[FabricPP/Java] WARNING: Some classes may have already loaded!");
-        System.out.println("[FabricPP/Java] For best results, use: -agentpath:/path/to/libfabricpp_agent.so");
+        System.out.println("[VoidLoader/Java] Java agent premain called");
+        System.out.println("[VoidLoader/Java] WARNING: Some classes may have already loaded!");
+        System.out.println("[VoidLoader/Java] For best results, use: -agentpath:/path/to/libVoidLoader_agent.so");
         System.out.println("========================================\n");
         
         try {
             nativeAgentStart();
             nativeAgentInit(args != null ? args : "", inst);
-            System.out.println("[FabricPP/Java] Agent initialized - delegating to Minecraft");
+            System.out.println("[VoidLoader/Java] Agent initialized - delegating to Minecraft");
         } catch (UnsatisfiedLinkError e) {
-            System.err.println("[FabricPP/Java] Native methods not available!");
-            System.err.println("[FabricPP/Java] The C++ agent may not have loaded correctly.");
+            System.err.println("[VoidLoader/Java] Native methods not available!");
+            System.err.println("[VoidLoader/Java] The C++ agent may not have loaded correctly.");
             e.printStackTrace();
         } catch (Throwable t) {
-            System.err.println("[FabricPP/Java] Error during initialization:");
+            System.err.println("[VoidLoader/Java] Error during initialization:");
             t.printStackTrace();
         }
     }
@@ -142,7 +147,7 @@ public class FabricPPAgent {
      * Dynamic attach entry point
      */
     public static void agentmain(String args, Instrumentation inst) {
-        System.out.println("[FabricPP/Java] Dynamic attach not fully supported");
+        System.out.println("[VoidLoader/Java] Dynamic attach not fully supported");
         premain(args, inst);
     }
     
@@ -164,6 +169,6 @@ public class FabricPPAgent {
     static {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             cleanup();
-        }, "FabricPP-Cleanup"));
+        }, "VoidLoader-Cleanup"));
     }
 }

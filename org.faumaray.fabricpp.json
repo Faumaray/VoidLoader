@@ -1,0 +1,21 @@
+{
+    "formatVersion": 1,
+    "mainClass": "org.faumaray.VoidLoaderMain",
+    "name": "VoidLoader",
+    "releaseTime": "2025-10-09T16:09:34+00:00",
+    "libraries": [
+        {
+            "name": "org.faumaray.VoidLoader:1.0.0",
+            "url": "https://maven.faumaray.ru"
+        }
+    ],
+    "requires": [
+        {
+            "equals": "1.21.10",
+            "uid": "net.minecraft"
+        }
+    ],
+    "type": "release",
+    "uid": "org.faumaray.VoidLoaderMain",
+    "version": "1.0.0"
+}

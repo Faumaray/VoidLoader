@@ -1,11 +1,11 @@
 {
     "formatVersion": 1,
-    "mainClass": "org.faumaray.VoidLoaderMain",
+    "mainClass": "ru.faumaray.VoidLoaderMain",
     "name": "VoidLoader",
     "releaseTime": "2025-10-09T16:09:34+00:00",
     "libraries": [
         {
-            "name": "org.faumaray.VoidLoader:1.0.0",
+            "name": "ru.faumaray.VoidLoader:1.0.0",
             "url": "https://maven.faumaray.ru"
         }
     ],
@@ -16,6 +16,6 @@
         }
     ],
     "type": "release",
-    "uid": "org.faumaray.VoidLoaderMain",
+    "uid": "ru.faumaray.VoidLoaderMain",
     "version": "1.0.0"
 }

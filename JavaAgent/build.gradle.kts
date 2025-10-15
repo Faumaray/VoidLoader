@@ -16,7 +16,7 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
-group = "org.faumaray"
+group = "ru.faumaray"
 version = "1.0.0"
 
 tasks.withType<Jar>().configureEach {
@@ -47,9 +47,9 @@ tasks.withType<Jar>().configureEach {
     }
     manifest {
         attributes(
-            "Main-Class" to "org.faumaray.VoidLoaderMain",
-            "Agent-Class" to "org.faumaray.VoidLoaderAgent",
-            "Premain-Class" to "org.faumaray.VoidLoaderAgent"
+            "Main-Class" to "ru.faumaray.VoidLoaderMain",
+            "Agent-Class" to "ru.faumaray.VoidLoaderAgent",
+            "Premain-Class" to "ru.faumaray.VoidLoaderAgent"
         )
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -58,7 +58,7 @@ tasks.withType<Jar>().configureEach {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "org.faumaray"
+            groupId = "ru.faumaray"
             artifactId = "VoidLoader"
             version = "1.0.0"
 
